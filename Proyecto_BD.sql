@@ -13,14 +13,17 @@ DROP TABLE [dbo].[REINTEGRO]
 GO
 DROP TABLE [dbo].[SOLICITUD]
 GO
+alter table departamento drop constraint departamento_jefatura_fk;
+GO
 DROP TABLE [dbo].[EMPLEADO]
+GO
+DROP TABLE [dbo].[DEPARTAMENTO]
 GO
 DROP TABLE [dbo].[PUESTO]
 GO
 DROP TABLE [dbo].[LOCACION]
 GO
-DROP TABLE [dbo].[DEPARTAMENTO]
-GO
+
 
 
 CREATE TABLE PUESTO
@@ -116,8 +119,12 @@ CREATE TABLE FEC_RESERVADAS
   PRIMARY KEY (ID_FECHA),
   FOREIGN KEY (ID_LOCACION) REFERENCES LOCACION (ID_LOCACION)
 );
-
-
+--aqui
+alter table departamento add constraint departamento_jefatura_fk foreign key (ID_JEFATURA) references EMPLEADO;
+GO
+--alter table departamento drop constraint departamento_jefatura_fk;
+--GO
+  
 create table empleado_aprobacion(ID_EMP_APROBAR INT NOT NULL, ID_EMP_PERMISO_APROBAR INT NOT NULL);
 GO
 
@@ -137,6 +144,8 @@ GO
 
 alter table fechas_locacion add constraint fec_reservada_fk foreign key (ID_FECHA_RESERVADA) references FEC_RESERVADAS;
 alter table fechas_locacion add constraint loc_reservada_fk foreign key (ID_LOCACION_A_RESERVAR) references LOCACION;
+
+
 
 
 INSERT INTO [dbo].[PUESTO] ([ID_PUESTO],[NOMBRE_PUESTO],[SALARIO_MIN],[SALARIO_MAX])
@@ -173,20 +182,23 @@ VALUES (25, 'Heredia', 'Heredia', 'San Francisco')
 
 GO
 
-INSERT INTO [dbo].[DEPARTAMENTO]([ID_DEPARTAMENTO],[NOMBRE_DEPARTAMENTO],[ID_JEFATURA])
-VALUES (31, 'IT', 700)
+ALTER TABLE departamento NOCHECK CONSTRAINT  departamento_jefatura_fk;
+Go
 
 INSERT INTO [dbo].[DEPARTAMENTO]([ID_DEPARTAMENTO],[NOMBRE_DEPARTAMENTO],[ID_JEFATURA])
-VALUES (32, 'Contabilidad', 701)
+VALUES (31, 'IT', 102)
 
 INSERT INTO [dbo].[DEPARTAMENTO]([ID_DEPARTAMENTO],[NOMBRE_DEPARTAMENTO],[ID_JEFATURA])
-VALUES (33, 'Recursos Humanos', 702)
+VALUES (32, 'Contabilidad', 102)
 
 INSERT INTO [dbo].[DEPARTAMENTO]([ID_DEPARTAMENTO],[NOMBRE_DEPARTAMENTO],[ID_JEFATURA])
-VALUES (34, 'Servicioa Cliente', 703)
+VALUES (33, 'Recursos Humanos', 102)
 
 INSERT INTO [dbo].[DEPARTAMENTO]([ID_DEPARTAMENTO],[NOMBRE_DEPARTAMENTO],[ID_JEFATURA])
-VALUES (35, 'Operario', 704)
+VALUES (34, 'Servicioa Cliente', 102)
+
+INSERT INTO [dbo].[DEPARTAMENTO]([ID_DEPARTAMENTO],[NOMBRE_DEPARTAMENTO],[ID_JEFATURA])
+VALUES (35, 'Operario', 102)
 
 GO
 
@@ -236,5 +248,16 @@ INSERT INTO [dbo].[SOLICITUD]([ID_SOLICITUD],[FEC_SALIDA],[FEC_REGRESO],[FEC_SOL
 		   (305, '2022-6-9','2022-6-14','2022-6-9', 'Vacacion', 'Pendiente', 102)
 
 GO
+ALTER TABLE departamento CHECK CONSTRAINT  departamento_jefatura_fk;
+Go
 
+drop view  saldo_dias_departamento;
+go
 
+create view saldo_dias_departamento as
+select a.NOMBRE_DEPARTAMENTO NOM_DEP, b.DIAS_VACACIONES
+from   DEPARTAMENTO a, EMPLEADO b
+where  a.ID_DEPARTAMENTO = b.ID_DEPARTAMENTO;
+go
+
+--select * from  saldo_dias_departamento;
