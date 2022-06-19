@@ -579,57 +579,20 @@ BEGIN
 END
 GO
 
---PROCEDIMIENTO INSERTAR FECHAS RESERVADAS
-DROP PROCEDURE [dbo].prc_ins_fec_reservadas;
+--PROCEDIMIENTO INSERTAR USUARIO_SOLICITAR
+DROP PROCEDURE [dbo].prc_ins_usuarios_solicitar;
 GO
 
-CREATE PROCEDURE [dbo].prc_ins_fec_reservadas
-		@PFecha							DATE,
-		@PConcepto						VARCHAR(30)
+CREATE PROCEDURE [dbo].prc_ins_usuarios_solicitar
+		@PIdEmp_Solicitar			int,
+		@PIdEmp_Permisos_Solic		int
 AS
 BEGIN
 	SET NOCOUNT ON
-	INSERT INTO [dbo].FEC_RESERVADAS([ID_FECHA],[FECHA],[CONCEPTO])
-	VALUES	(NEXT VALUE FOR sequence_fec_reservadas, @PFecha, @PConcepto);
-END
+	INSERT INTO [dbo].empleado_solicitar([ID_EMP_SOLICITAR],[ID_EMP_PERMISO_SOLICITAR])
+	VALUES (@PIdEmp_Solicitar, @PIdEmp_Permisos_Solic);
+END 
 GO
-
-EXEC dbo.prc_ins_fec_reservadas '2022-08-15', 'Dia de las Madres';
-
---PROCEDIMIENTO UPDATE FECHAS RESERVADAS
-DROP PROCEDURE [dbo].prc_upd_fec_reservadas;
-GO
-
-CREATE PROCEDURE [dbo].prc_upd_fec_reservadas
-		@PIdFecha							INT,
-		@PFecha							DATE,
-		@PConcepto						VARCHAR(30)
-AS
-BEGIN
-	SET NOCOUNT ON
-	UPDATE dbo.FEC_RESERVADAS 
-	SET FECHA = @PFecha, CONCEPTO = @PConcepto
-	WHERE dbo.FEC_RESERVADAS.ID_FECHA = @PIdFecha;
-END
-GO
-
-EXEC dbo.prc_upd_fec_reservadas 86, '2022-06-19','Prueba';
-
---PROCEDIMIENTO ELIMINAR FECHAS RESERVADAS
-DROP PROCEDURE [dbo].prc_del_fec_reservadas;
-GO
-
-CREATE PROCEDURE [dbo].prc_del_fec_reservadas
-		@PIdFecha							INT
-AS
-BEGIN
-	SET NOCOUNT ON
-	DELETE FROM dbo.FEC_RESERVADAS 
-	WHERE dbo.FEC_RESERVADAS.ID_FECHA = @PIdFecha;
-END
-GO
-
-EXEC dbo.prc_del_fec_reservadas 86;
 
 
 Print 'VISTA - 1'
@@ -683,10 +646,10 @@ Print 'PROCEDIMIENTO - 2'
 
 --PROCEDIMIENTO INSERTAR TABLA USUARIOS_SOLICITAR
 --Verificar que Id_Empleado_A_Solicitar no sea el mismo que ID_Empleado_Permisos_Solicitar para poder realizar un insert 
-DROP PROCEDURE [dbo].prc_ins_usuarios_solicitar;
+DROP PROCEDURE [dbo].prc_ins_usuarios_solicitar_iguales;
 go
 
-CREATE PROCEDURE [dbo].prc_ins_usuarios_solicitar
+CREATE PROCEDURE [dbo].prc_ins_usuarios_solicitar_iguales
 		@PId_Emp_Permisos_Solicitar					INT,
 		@PId_Emp_Solicitar							INT
 AS
